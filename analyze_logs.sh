@@ -21,17 +21,17 @@ methods_stats=$(awk '{if ($6 == "\"GET") get_count++; if ($6 == "\"POST") post_c
 
 # Нахождение самого популярного URL (строго с awk)
 popular_url=$(awk '{
-    split($7, url, " ");  # Разделяем URL, чтобы получить путь
-    if (url[1] != "") urls[url[1]]++  # Подсчитываем количество каждого URL
+    url = $7;  
+    if (url != "") {
+        count[url]++;  
+        if (count[url] > max_count) {  
+            max_count = count[url];
+            popular = url;
+        }
+    }
 }
 END {
-    max = 0;
-    for (u in urls)  # Ищем самый популярный URL
-        if (urls[u] > max) {
-            max = urls[u];
-            popular = u
-        }
-    print popular, max  # Выводим самую популярную ссылку и количество запросов
+    print popular, max_count  # Виводимо найпопулярніший URL і кількість запитів
 }' access.log)
 
 # Отчет о логе веб-сервера
